@@ -1,7 +1,15 @@
 {
     "name": "com.gstein.assetbundledownloader",
     "displayName": "AssetBundleDownloader",
-    "version": "1.0.0",
+    "version": "1.0.1",
     "unity": "2019.4",
-    "description": "Downloads AssetBundles and metadata remotely"
+    "description": "Downloads AssetBundles and metadata remotely",
+    "dependencies": {
+        "com.unity.nuget.newtonsoft-json": "2.0.0"
+    },
+    "author": {
+        "name": "Gordon Stein",
+        "email": "gstein@ltu.edu",
+        "url": "https://github.com/gsteinLTU/AssetBundleDownloader"
+    }
 }
