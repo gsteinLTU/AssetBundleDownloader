@@ -20,6 +20,11 @@ namespace Plugins.AssetBundleDownloader.Scripts
         public List<string> BundleSources = new List<string> { "https://unity-assetloader-test.s3.us-east-2.amazonaws.com/bundles_info.json" };
 
         /// <summary>
+        /// Unloads all AssetBundles in OnEnable
+        /// </summary>
+        public bool UnloadBundlesOnEnable = true;
+
+        /// <summary>
         /// Bundles already loaded by program
         /// </summary>
         [HideInInspector]
@@ -36,6 +41,20 @@ namespace Plugins.AssetBundleDownloader.Scripts
         /// </summary>
         [HideInInspector]
         public string Platform { get; } = Application.platform.ToString().Replace("Editor", "").Replace("Player", "");
+
+        private void OnEnable()
+        {
+            if (UnloadBundlesOnEnable)
+            {
+                foreach (var bundle in DownloadedBundles.Values)
+                {
+                    bundle.Unload(true);
+                }
+
+                DownloadedBundles.Clear();
+            }
+
+        }
 
         /// <summary>
         /// Collection of bundles filtered to the current platform
@@ -68,13 +87,13 @@ namespace Plugins.AssetBundleDownloader.Scripts
             }
 
             // Handle error case
-            if (request.isNetworkError || request.isHttpError)
+            if (request.result != UnityWebRequest.Result.Success)
             {
-                throw new WebException("Could not make API request");
+                throw new WebException("Could not make API request: " + request.error);
             }
 
             var deserialized = JsonConvert.DeserializeObject<Dictionary<string, BundleMetadata>>(request.downloadHandler.text);
-
+            
             foreach (string bundleName in deserialized.Keys)
             {
                 if (KnownBundles.ContainsKey(bundleName))
@@ -162,8 +181,9 @@ namespace Plugins.AssetBundleDownloader.Scripts
         public string description;
         public Dictionary<string, List<string>> bundles;
         public List<string> tags;
+        [JsonProperty("error", NullValueHandling = NullValueHandling.Ignore)]
         public string error;
         public string author;
-        public int lastUpdated;
+        public long lastUpdated;
     }
 }
