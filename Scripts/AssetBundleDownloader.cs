@@ -34,8 +34,8 @@ namespace Plugins.AssetBundleDownloader.Scripts
         /// Bundles with metadata downloaded 
         /// </summary>
         [HideInInspector]
-        public Dictionary<string, BundleMetadata> KnownBundles = new Dictionary<string, BundleMetadata>();
-
+        public static Dictionary<string, BundleMetadata> KnownBundles = new Dictionary<string, BundleMetadata>();
+        
         /// <summary>
         /// Trimmed platform name for session
         /// </summary>
