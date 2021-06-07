@@ -48,7 +48,7 @@ namespace Plugins.AssetBundleDownloader.Scripts
             {
                 foreach (var bundle in DownloadedBundles.Values)
                 {
-                    bundle.Unload(true);
+                    bundle?.Unload(true);
                 }
 
                 DownloadedBundles.Clear();
