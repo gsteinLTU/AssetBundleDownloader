@@ -40,26 +40,34 @@ namespace Plugins.AssetBundleDownloader.Scripts
         /// Trimmed platform name for session
         /// </summary>
         [HideInInspector]
-        public string Platform { get; } = Application.platform.ToString().Replace("Editor", "").Replace("Player", "");
+        public static string Platform { get; } = Application.platform.ToString().Replace("Editor", "").Replace("Player", "");
 
         private void OnEnable()
         {
             if (UnloadBundlesOnEnable)
             {
-                foreach (var bundle in DownloadedBundles.Values)
-                {
-                    bundle?.Unload(true);
-                }
-
-                DownloadedBundles.Clear();
+                UnloadBundles();
             }
 
         }
 
         /// <summary>
+        /// Unloads all downloaded bundles
+        /// </summary>
+        internal static void UnloadBundles()
+        {
+            foreach (var bundle in DownloadedBundles.Values)
+            {
+                bundle?.Unload(true);
+            }
+
+            DownloadedBundles.Clear();
+        }
+
+        /// <summary>
         /// Collection of bundles filtered to the current platform
         /// </summary>
-        public IEnumerable<BundleMetadata> CompatibleBundles
+        public static IEnumerable<BundleMetadata> CompatibleBundles
         {
             get { return KnownBundles.Values.Where(bundle => bundle.bundles.ContainsKey(Platform)); }
         }
@@ -75,7 +83,7 @@ namespace Plugins.AssetBundleDownloader.Scripts
         /// </summary>
         /// <param name="source">URL to load list from</param>
         /// <returns></returns>
-        async Task getBundlesList(string source)
+        internal async Task getBundlesList(string source)
         {
             var request = UnityWebRequest.Get(source);
             request.SendWebRequest();
@@ -117,7 +125,7 @@ namespace Plugins.AssetBundleDownloader.Scripts
         /// </summary>
         /// <param name="bundleName"></param>
         /// <returns></returns>
-        public BundleMetadata GetBundleMetadata(string bundleName)
+        public static BundleMetadata GetBundleMetadata(string bundleName)
         {
             // Handle error case
             if (!KnownBundles.ContainsKey(bundleName))
@@ -133,7 +141,7 @@ namespace Plugins.AssetBundleDownloader.Scripts
         /// </summary>
         /// <param name="filename"></param>
         /// <returns></returns>
-        public async Task<AssetBundle> GetBundle(string filename)
+        public static async Task<AssetBundle> GetBundle(string filename)
         {
             string bundleName = filename;
             Debug.Log($"AssetBundle {bundleName}");
